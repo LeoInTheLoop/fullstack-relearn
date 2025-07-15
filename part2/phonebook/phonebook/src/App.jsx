@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
+import teleService from './services/teles'
 
 
 
@@ -18,8 +19,8 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    teleService
+      .getAll()
       .then(response => {
         console.log('promise fulfilled')
         setPersons(response.data)
@@ -58,8 +59,8 @@ const App = () => {
       // Let's return to our phonebook application.
 
       // Currently, the numbers that are added to the phonebook are not saved to a backend server. Fix this situation.
-      axios
-        .post('http://localhost:3001/persons', personObject)
+      teleService
+        .create(personObject)
         .then(response => {
           setPersons(persons.concat(response.data))
           setNewName('')
