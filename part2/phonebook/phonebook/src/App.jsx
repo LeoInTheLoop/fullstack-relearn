@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -10,14 +11,22 @@ import Persons from './components/Persons'
 
 const App = () => {
   const [persons, setPersons] = useState([
-      { name: 'Arto Hellas', number: '040-123456', id: 1 },
-      { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-      { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-      { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-    ])
+  ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+
+
 
   const filterHandler = (event) => {
     console.log(event.target.value)
@@ -42,16 +51,28 @@ const App = () => {
     }
     if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
-      
+
     } else {
-      setPersons(persons.concat(personObject))
+
+      //   2.12: The Phonebook step 7
+      // Let's return to our phonebook application.
+
+      // Currently, the numbers that are added to the phonebook are not saved to a backend server. Fix this situation.
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')
+        })
+
+
     }
 
-    setNewName('')
-    setNewNumber('')
+
   }
 
-  const filteredPersons = persons.filter(person => 
+  const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(newFilter.toLowerCase())
   )
   const personsToShow = newFilter ? filteredPersons : persons
@@ -63,15 +84,15 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter filter={newFilter} onChange={filterHandler} />
       <h2>add a new  </h2>
-      <PersonForm 
-        onSubmit={addPerson} 
-        newName={newName} 
-        newNumber={newNumber} 
-        onNameChange={newNameHandler} 
+      <PersonForm
+        onSubmit={addPerson}
+        newName={newName}
+        newNumber={newNumber}
+        onNameChange={newNameHandler}
         onNumberChange={newnumbrtHandler}
       />
       <h2>Numbers</h2>
-    <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} />
 
     </div>
   )
