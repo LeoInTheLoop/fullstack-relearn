@@ -43,15 +43,37 @@ const App = () => {
     console.log(event.target.value)
     setNewName(event.target.value)
   }
-  const addPerson = (event) => {
+  const addOrUpdatePerson = (event) => {
     event.preventDefault()
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      id:  String(persons.length + 1)
     }
     if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      // update
+      if(persons.some(person => person.number == newNumber)) {
+        alert(`${newName} is already added to phonebook`)
+        return
+      }
+      const personToUpdate = persons.find(person => person.name === newName)
+      personObject.id = personToUpdate.id
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        teleService
+          .update(personToUpdate.id, personObject)
+          .then(response => {
+            setPersons(
+              persons.map(person => person.id !== personToUpdate.id ? person : response.data)
+             )
+            setNewName('')
+            setNewNumber('')
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch(error => {
+            alert(`Information of ${newName} update failed`)
+            
+          })
+      }
 
     } else {
 
@@ -95,7 +117,7 @@ const App = () => {
       <Filter filter={newFilter} onChange={filterHandler} />
       <h2>add a new  </h2>
       <PersonForm
-        onSubmit={addPerson}
+        onSubmit={addOrUpdatePerson}
         newName={newName}
         newNumber={newNumber}
         onNameChange={newNameHandler}
