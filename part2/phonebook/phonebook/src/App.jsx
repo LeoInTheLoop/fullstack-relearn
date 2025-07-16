@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-
+import Notification from './components/Notification'
 import teleService from './services/teles'
 
 
@@ -16,6 +16,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -50,6 +51,9 @@ const App = () => {
       number: newNumber,
       id:  String(persons.length + 1)
     }
+// 2.16: Phonebook step 11
+// Use the improved error message example from part 2 as a guide to show a notification that lasts for a few seconds after a successful operation is executed (a person is added or a number is changed):
+
     if (persons.some(person => person.name === newName)) {
       // update
       if(persons.some(person => person.number == newNumber)) {
@@ -67,6 +71,8 @@ const App = () => {
              )
             setNewName('')
             setNewNumber('')
+
+            setNotification(`Updated ${newName}'s number`)
           })
           // eslint-disable-next-line no-unused-vars
           .catch(error => {
@@ -88,6 +94,8 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+
+      setNotification(`Added ${newName}`)
     }
   }
 
@@ -114,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <Filter filter={newFilter} onChange={filterHandler} />
       <h2>add a new  </h2>
       <PersonForm
