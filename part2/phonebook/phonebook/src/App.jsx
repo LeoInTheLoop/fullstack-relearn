@@ -66,18 +66,27 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-
-
     }
-
-
   }
 
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(newFilter.toLowerCase())
   )
   const personsToShow = newFilter ? filteredPersons : persons
-
+  const deletePerson = (id) => {
+    if (window.confirm(`Delete ${persons.find(p => p.id === id).name}?`)) {
+      teleService
+        .delete(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        // eslint-disable-next-line no-unused-vars
+        .catch(error => {
+          alert(`Information of ${persons.find(p => p.id === id).name} has already been removed from server`)
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
 
 
   return (
@@ -93,7 +102,7 @@ const App = () => {
         onNumberChange={newnumbrtHandler}
       />
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deletePerson={deletePerson} />
 
     </div>
   )
