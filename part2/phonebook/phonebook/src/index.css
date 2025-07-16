@@ -73,10 +73,18 @@ li {
   font-size: 15px;
 }
 
-.error {
+.notification {
   color: green;
   font-size: 20px;
   padding: 10px;
   border: 2px solid green;
+ 
+}
+
+.error {
+  color: red;
+  font-size: 20px;
+  padding: 10px;
+  border: 2px solid red;
  
 }

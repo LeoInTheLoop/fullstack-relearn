@@ -17,6 +17,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [notification, setNotification] = useState(null)
+  const [notificationCss, setNotificationCss] = useState('error')
 
   useEffect(() => {
     console.log('effect')
@@ -73,6 +74,7 @@ const App = () => {
             setNewNumber('')
 
             setNotification(`Updated ${newName}'s number`)
+            setNotificationCss('notification')
           })
           // eslint-disable-next-line no-unused-vars
           .catch(error => {
@@ -96,6 +98,7 @@ const App = () => {
         })
 
       setNotification(`Added ${newName}`)
+      setNotificationCss('notification')
     }
   }
 
@@ -109,6 +112,9 @@ const App = () => {
         .delete(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
+
+          setNotification(`Deleted ${persons.find(p => p.id === id).name}`)
+          setNotificationCss('error')
         })
         // eslint-disable-next-line no-unused-vars
         .catch(error => {
@@ -122,7 +128,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification message={notification}  notificationCss={notificationCss}/>
       <Filter filter={newFilter} onChange={filterHandler} />
       <h2>add a new  </h2>
       <PersonForm

@@ -1,14 +1,9 @@
 {
   "persons": [
     {
-      "name": "leo yui",
-      "number": "4321",
-      "id": "4"
-    },
-    {
-      "id": "2",
       "name": "kong",
-      "number": "666999"
+      "number": "9999222",
+      "id": "2"
     },
     {
       "id": "3",
@@ -19,11 +14,6 @@
       "id": "4",
       "name": "leo yui",
       "number": "12324"
-    },
-    {
-      "id": "5",
-      "name": "yoyouy",
-      "number": "4124124"
     }
   ]
 }
