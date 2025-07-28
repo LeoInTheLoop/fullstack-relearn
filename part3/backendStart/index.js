@@ -52,6 +52,43 @@ app.get('/info', (request, response) => {
                 <p>${new Date()}</p>`)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  const person = persons.find(person => person.id === id)
+    if (person) {
+    response.json(person)
+    } else {
+    response.status(404).end()
+    }
+
+})
+app.delete('/api/persons/:id', (request, response) => {
+  const id = request.params.id
+  persons = persons.filter(person => person.id !== id)
+
+  response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  const person = request.body
+  console.log(person)
+    if (!person.name || !person.number) {
+        return response.status(400).json({ error: 'name or number missing' })
+    }   
+    if (persons.find(p => p.name === person.name)) {    
+        return response.status(400).json({ error: 'name must be unique' })
+    }
+  const newPerson = {
+    id: (Math.random() * 10000).toFixed(0),
+    name: person.name,
+    number: person.number
+  }
+  persons = persons.concat(newPerson)
+  response.json(newPerson)  
+
+
+})
+
 
 
 app.get('/', (request, response) => {
