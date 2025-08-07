@@ -1,6 +1,18 @@
 const express = require('express')
+var morgan = require('morgan')
+const { v4: uuidv4 } = require('uuid')
+
+
+
 const app = express()
+app.use(assignId)
 app.use(express.json())
+morgan.token('body', (req) => JSON.stringify(req.body))
+app.use(morgan(':id :method :url :response-time :body'))
+
+morgan.token('id', function getId (req) {
+  return req.id
+})
 
 let notes = [
   {
@@ -43,6 +55,21 @@ let persons = [
     }
 ]
 
+// const requestLogger = (request, response, next) => {
+//   console.log('Method:', request.method)
+//   console.log('Path:  ', request.path)
+//   console.log('Body:  ', request.body)
+//   console.log('---')
+//   if (request.method === 'POST') {
+//     console.log('body:    ', request.body)
+//   }
+//   next()
+// }
+
+// app.use(requestLogger)
+
+
+
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
@@ -71,7 +98,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
   const person = request.body
-  console.log(person)
+  // console.log(person)
     if (!person.name || !person.number) {
         return response.status(400).json({ error: 'name or number missing' })
     }   
@@ -121,9 +148,19 @@ app.post('/api/notes', (request, response) => {
   response.json(note)
 })
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+function assignId (req, res, next) {
+  req.id =  uuidv4()
+  next()
+}
