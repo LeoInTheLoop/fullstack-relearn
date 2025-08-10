@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require('uuid')
 const app = express()
 app.use(assignId)
 app.use(express.json())
+app.use(express.static('dist'))
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':id :method :url :response-time :body'))
 
