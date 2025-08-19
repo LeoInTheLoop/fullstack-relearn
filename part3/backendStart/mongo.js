@@ -13,19 +13,35 @@ mongoose.set('strictQuery',false)
 
 mongoose.connect(url)
 
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
+const phonebookSchema = new mongoose.Schema({
+  name: String,
+  number: String,
 })
 
-const Note = mongoose.model('Note', noteSchema)
+const Phonebook = mongoose.model('Phonebook', phonebookSchema)
 
-const note = new Note({
-  content: 'HTML is easy',
-  important: true,
+//retrieve all notes
+if (process.argv.length === 3) {
+  Phonebook.find({}).then(result => {
+    result.forEach(note => {
+      console.log(note)
+    })
+    mongoose.connection.close()
+    process.exit(1)
+  })
+}else{
+
+//add a new note
+const phonebook = new Phonebook({
+  name: process.argv[3],
+  number: process.argv[4],
 })
 
-note.save().then(result => {
-  console.log('note saved!')
+phonebook.save().then(result => {
+  console.log(`added ${result.name} number ${result.number} to phonebook`)
   mongoose.connection.close()
 })
+
+}
+
+
