@@ -36,18 +36,18 @@ app.use(assignId)
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':id :method :url :response-time :body'))
 
-morgan.token('id', function getId (req) {
+morgan.token('id', function getId(req) {
   return req.id
 })
 
 
 // let persons = [
-//     { 
+//     {
 //       "id": "1",
 //       "name": "Arto Hellas", 
 //       "number": "040-123456"
 //     },
-//     { 
+//     {
 //       "id": "2",
 //       "name": "Ada Lovelace", 
 //       "number": "39-44-5323523"
@@ -81,29 +81,30 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-  
+
   Phonebook.findById(request.params.id)
     .then(
-      phonebook => {if (phonebook) {
-              response.json(phonebook)
-            } else {
-              response.status(404).end()
-            }
-    })
+      phonebook => {
+        if (phonebook) {
+          response.json(phonebook)
+        } else {
+          response.status(404).end()
+        }
+      })
     .catch(error => next(error))
     .catch(error => {
       console.log(error)
       response.status(400).send({ error: 'malformatted id' })
     })
 
-   
+
 })
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Phonebook.findByIdAndDelete(request.params.id)
-      .then(result => {
-        response.status(204).end()
-      })
-      .catch(error => next(error))
+    .then(_result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
@@ -197,8 +198,8 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
-function assignId (req, res, next) {
-  req.id =  uuidv4()
+function assignId(req, res, next) {
+  req.id = uuidv4()
   next()
 }
 const errorHandler = (error, request, response, next) => {
