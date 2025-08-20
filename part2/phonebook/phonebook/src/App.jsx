@@ -50,14 +50,14 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id:  String(persons.length + 1)
+      // id:  String(persons.length + 1)
     }
-// 2.16: Phonebook step 11
-// Use the improved error message example from part 2 as a guide to show a notification that lasts for a few seconds after a successful operation is executed (a person is added or a number is changed):
+    // 2.16: Phonebook step 11
+    // Use the improved error message example from part 2 as a guide to show a notification that lasts for a few seconds after a successful operation is executed (a person is added or a number is changed):
 
     if (persons.some(person => person.name === newName)) {
       // update
-      if(persons.some(person => person.number == newNumber)) {
+      if (persons.some(person => person.number == newNumber)) {
         alert(`${newName} is already added to phonebook`)
         return
       }
@@ -69,7 +69,7 @@ const App = () => {
           .then(response => {
             setPersons(
               persons.map(person => person.id !== personToUpdate.id ? person : response.data)
-             )
+            )
             setNewName('')
             setNewNumber('')
 
@@ -79,15 +79,13 @@ const App = () => {
           // eslint-disable-next-line no-unused-vars
           .catch(error => {
             alert(`Information of ${newName} update failed`)
-            
+
           })
       }
 
     } else {
-
       //   2.12: The Phonebook step 7
       // Let's return to our phonebook application.
-
       // Currently, the numbers that are added to the phonebook are not saved to a backend server. Fix this situation.
       teleService
         .create(personObject)
@@ -95,10 +93,16 @@ const App = () => {
           setPersons(persons.concat(response.data))
           setNewName('')
           setNewNumber('')
+          setNotification(`Added ${newName}`)
+          setNotificationCss('notification')
+        })
+        .catch(error => {
+          console.error('Create failed:', error)
+          setNotification(`Failed to add because ${error.response.data.error}`)
+          setNotificationCss('error')
         })
 
-      setNotification(`Added ${newName}`)
-      setNotificationCss('notification')
+
     }
   }
 
@@ -128,7 +132,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook fly</h2>
-      <Notification message={notification}  notificationCss={notificationCss}/>
+      <Notification message={notification} notificationCss={notificationCss} />
       <Filter filter={newFilter} onChange={filterHandler} />
       <h2>add a new  </h2>
       <PersonForm
