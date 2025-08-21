@@ -25,7 +25,7 @@ app.post('/api/blogs', (request, response) => {
   })
 })
 
-const PORT = 3003
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
