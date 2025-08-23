@@ -8,12 +8,13 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \\\"Error: no test specified\\\" && exit 1",
+   
     "dev": "node --watch index.js",
     "build:ui": "rm -rf dist && cd ../../part2/phonebook/phonebook/ && npm run build && cp -r dist ../../../part3/backendStart",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "test": "node --test"
   },
   "dependencies": {
     "cors": "^2.8.5",
