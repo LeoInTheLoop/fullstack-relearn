@@ -5,7 +5,7 @@ const app = require('../app')
 const assert = require('node:assert')
 const logger = require('../utils/logger')
 const blogModel = require('../models/blog')
-const { initialBlog } = require('./test_helper')
+const helper = require('./test_helper')
 
 const api = supertest(app)
 
@@ -13,9 +13,9 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await blogModel.deleteMany({})
-  let blogObject = new blogModel(initialBlog[0])
+  let blogObject = new blogModel(helper.initialBlog[0])
   await blogObject.save()
-  blogObject = new blogModel(initialBlog[1])
+  blogObject = new blogModel(helper.initialBlog[1])
   await blogObject.save()
 })
 
@@ -30,7 +30,7 @@ test.only('blog are returned as json', async () => {
 test.only('all notes are returned', async () => {
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(response.body.length, initialBlog.length)
+  assert.strictEqual(response.body.length, helper.initialBlog.length)
 })
 
 test('a specific title is within the returned blog', async () => {
@@ -54,9 +54,11 @@ test('blog without title is not added', async () => {
     .send(newblog)
     .expect(400)
 
-  const response = await api.get('/api/blogs')
+  
+  const blogAtEnd = await helper.blogsInDb()
+  
 
-  assert.strictEqual(response.body.length, initialBlog.length)
+  assert.strictEqual(blogAtEnd.length, helper.initialBlog.length)
 })
 
 test('a valid note can be added ', async () => {
@@ -73,12 +75,10 @@ test('a valid note can be added ', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
+  const blogAtEnd = await helper.blogsInDb()
 
-  const contents = response.body.map(r => r.title)
-
-
-  assert.strictEqual(response.body.length, initialBlog.length + 1)
+  const contents = blogAtEnd.map(n => n.title)
+  assert.strictEqual(blogAtEnd.length, helper.initialBlog.length + 1)
 
   assert(contents.includes('test4'))
 })
