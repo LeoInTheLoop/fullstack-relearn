@@ -71,7 +71,7 @@ test('blog without title is not added', async () => {
   assert.strictEqual(blogAtEnd.length, helper.initialBlog.length)
 })
 
-test('a valid note can be added ', async () => {
+test('a valid note can be added HTTP POST', async () => {
   const newBlog = {
     "title": "test4",
     "author": "String ba;a;",
