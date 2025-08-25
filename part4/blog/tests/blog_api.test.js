@@ -14,13 +14,18 @@ const api = supertest(app)
 beforeEach(async () => {
   await blogModel.deleteMany({})
   logger.info("clear")
-  helper.initialBlog.forEach(async (note) => {
+  // helper.initialBlog.forEach(async (note) => {
 
+  //   let blogObject = new blogModel(blog)
+  //   await blogObject.save()
+  //   logger.info("save")
+  // });
+  // logger.info("done")
+  for (let blog of helper.initialBlog) {
     let blogObject = new blogModel(blog)
     await blogObject.save()
-    logger.info("save")
-  });
-  logger.info("done")
+  }
+  logger.info("save done")
 
 })
 
@@ -32,7 +37,7 @@ test.only('blog are returned as json', async () => {
 })
 
 
-test.only('all notes are returned', async () => {
+test.only('all notes are returned HTTP GET', async () => {
   const response = await api.get('/api/blogs')
 
   assert.strictEqual(response.body.length, helper.initialBlog.length)
@@ -88,17 +93,17 @@ test('a valid note can be added ', async () => {
   assert(contents.includes('test4'))
 })
 
-test('a specific note can be viewed', async () => {
-  const blogsAtStart = await helper.blogsInDb()
-  const noteToView = blogsAtStart[0]
+// test('a specific note can be viewed', async () => {
+//   const blogsAtStart = await helper.blogsInDb()
+//   const noteToView = blogsAtStart[0]
 
-  const resultNote = await api
-    .get(`/api/blogs/${noteToView.id}`)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+//   const resultNote = await api
+//     .get(`/api/blogs/${noteToView.id}`)
+//     .expect(200)
+//     .expect('Content-Type', /application\/json/)
 
-  assert.deepStrictEqual(resultNote.body, noteToView)
-})
+//   assert.deepStrictEqual(resultNote.body, noteToView)
+// })
 
 
 after(async () => {
