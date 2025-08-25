@@ -104,7 +104,12 @@ test('a valid note can be added ', async () => {
 
 //   assert.deepStrictEqual(resultNote.body, noteToView)
 // })
-
+test('a note have id property', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const noteToView = blogsAtStart[0]
+  // logger.info(noteToView)
+  assert.ok(noteToView.id)
+})
 
 after(async () => {
   await mongoose.connection.close()
