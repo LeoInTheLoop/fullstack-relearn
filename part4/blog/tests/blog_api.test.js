@@ -110,6 +110,21 @@ test('a note have id property', async () => {
   // logger.info(noteToView)
   assert.ok(noteToView.id)
 })
+test('note like default 0 ', async () => {
+  const newBlog = {
+    "title": "test4",
+    "author": "String ba;a;",
+    "url": " www.test2.com",
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  assert.strictEqual(response.body.likes, 0)
+})
 
 after(async () => {
   await mongoose.connection.close()
