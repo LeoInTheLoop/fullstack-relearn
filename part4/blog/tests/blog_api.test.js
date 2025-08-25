@@ -13,10 +13,15 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await blogModel.deleteMany({})
-  let blogObject = new blogModel(helper.initialBlog[0])
-  await blogObject.save()
-  blogObject = new blogModel(helper.initialBlog[1])
-  await blogObject.save()
+  logger.info("clear")
+  helper.initialBlog.forEach(async (note) => {
+
+    let blogObject = new blogModel(blog)
+    await blogObject.save()
+    logger.info("save")
+  });
+  logger.info("done")
+
 })
 
 test.only('blog are returned as json', async () => {
@@ -82,6 +87,19 @@ test('a valid note can be added ', async () => {
 
   assert(contents.includes('test4'))
 })
+
+test('a specific note can be viewed', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const noteToView = blogsAtStart[0]
+
+  const resultNote = await api
+    .get(`/api/blogs/${noteToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  assert.deepStrictEqual(resultNote.body, noteToView)
+})
+
 
 after(async () => {
   await mongoose.connection.close()
