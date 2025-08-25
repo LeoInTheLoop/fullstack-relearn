@@ -10,7 +10,7 @@ const app = express()
 const mongoUrl = config.MONGODB_URI
 mongoose.connect(mongoUrl)
   .then(() => {
-    logger.info('connected to MongoDB')
+    logger.info('connected to MongoDB',mongoUrl)
   })
   .catch((error) => {
     logger.info('error connecting to MongoDB:', error.message)
@@ -25,4 +25,4 @@ app.use('/api/blogs', blogsRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
-module.exports = app 
+module.exports = app   
