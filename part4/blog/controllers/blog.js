@@ -11,7 +11,7 @@ const Blog = require('../models/blog')
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
   response.json(blogs)
- 
+
 })
 blogRouter.get('/:id', async (request, response, next) => {
   const blog = await Blog.findById(request.params.id)
@@ -40,9 +40,9 @@ blogRouter.delete('/:id', async (request, response, next) => {
       return response.status(404).json({ error: 'Blog not found' })
     }
 
-    response.status(204).end() 
+    response.status(204).end()
   } catch (error) {
-    next(error) 
+    next(error)
   }
 })
 
@@ -51,22 +51,20 @@ blogRouter.delete('/:id', async (request, response, next) => {
 //     "url": " www.test2.com",
 //     "likes": 13
 
-blogRouter.put('/:id', (request, response, next) => {
-  const {  likes } = request.body
+blogRouter.put('/:id', async (request, response, next) => {
+  const { likes } = request.body
+  try {
+    const blog = await Blog.findById(request.params.id)
+    if (!blog) {
+      return response.status(404).end()
+    }
+    blog.likes = likes
+    savedBlog = await blog.save()
+    response.status(200).json(savedBlog)
 
-  Blog.findById(request.params.id)
-    .then(blog => {
-      if (!blog) {
-        return response.status(404).end()
-      }
-      blog.likes = likes
-      return blog.save().then((updatedBlog) => {
-        response.status( 200) 
-        .json(updatedBlog)
-      })
-    })
-    .catch(error => next(error))
-})
-
+  }
+  catch (error) { next(error) }
+}
+)
 
 module.exports = blogRouter
