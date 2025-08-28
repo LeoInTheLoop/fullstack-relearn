@@ -46,5 +46,27 @@ blogRouter.delete('/:id', async (request, response, next) => {
   }
 })
 
+//  "title": "test3",
+//     "author": "String ba;a;",
+//     "url": " www.test2.com",
+//     "likes": 13
+
+blogRouter.put('/:id', (request, response, next) => {
+  const {  likes } = request.body
+
+  Blog.findById(request.params.id)
+    .then(blog => {
+      if (!blog) {
+        return response.status(404).end()
+      }
+      blog.likes = likes
+      return blog.save().then((updatedBlog) => {
+        response.status( 200) 
+        .json(updatedBlog)
+      })
+    })
+    .catch(error => next(error))
+})
+
 
 module.exports = blogRouter

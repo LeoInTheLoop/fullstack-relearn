@@ -129,6 +129,20 @@ test('note like default 0 ', async () => {
   assert.strictEqual(response.body.likes, 0)
 })
 
+test.only('a note can be update like', async () => {
+  const blogs = await helper.blogsInDb()
+  const blogToUpdate = blogs.find(b => b.title === 'test2')
+  // logger.info(blogToDelete)    
+  await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send({ likes: 20 })
+     
+  const blogsAtEnd = await helper.blogsInDb()
+  const updatedBlog = blogsAtEnd.find(b => b.title === 'test2')
+  assert.strictEqual(updatedBlog.likes, 20)
+  
+})
+
 test('a note can be deleted', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
