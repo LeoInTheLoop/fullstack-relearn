@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -21,6 +21,8 @@ beforeEach(async () => {
   //   logger.info("save")
   // });
   // logger.info("done")
+
+  //  await Note.insertMany(helper.initialNotes)!!
   for (let blog of helper.initialBlog) {
     let blogObject = new blogModel(blog)
     await blogObject.save()
@@ -29,7 +31,7 @@ beforeEach(async () => {
 
 })
 
-test.only('blog are returned as json', async () => {
+test('blog are returned as json', async () => {
   await api
     .get('/api/blogs')
     .expect(200)
@@ -37,7 +39,7 @@ test.only('blog are returned as json', async () => {
 })
 
 
-test.only('all notes are returned HTTP GET', async () => {
+test('all notes are returned HTTP GET', async () => {
   const response = await api.get('/api/blogs')
 
   assert.strictEqual(response.body.length, helper.initialBlog.length)
@@ -51,6 +53,7 @@ test('a specific title is within the returned blog', async () => {
   assert.strictEqual(titles.includes('test2'), true)
 })
 
+describe('addition of a new note', () => {
 test('blog without title is not added', async () => {
   const newblog = {
     "title": "5",
@@ -92,7 +95,7 @@ test('a valid note can be added HTTP POST', async () => {
 
   assert(contents.includes('test4'))
 })
-
+})
 // test('a specific note can be viewed', async () => {
 //   const blogsAtStart = await helper.blogsInDb()
 //   const noteToView = blogsAtStart[0]
@@ -124,6 +127,17 @@ test('note like default 0 ', async () => {
     .expect('Content-Type', /application\/json/)
 
   assert.strictEqual(response.body.likes, 0)
+})
+
+test('a note can be deleted', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+  // logger.info(blogToDelete)    
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)  
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlog.length - 1)
 })
 
 after(async () => {
