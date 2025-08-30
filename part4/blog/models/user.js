@@ -2,7 +2,11 @@ const mongoose = require('mongoose')
 // const { blogsInDb } = require('../tests/test_helper')
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true // this ensures the uniqueness of username
+  },
   name: String,
   passwordHash: String,
   blogs: [

@@ -39,5 +39,8 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 module.exports = {
-  initialBlog, nonExistingId, blogsInDb, usersInDb
+  initialBlog, 
+  nonExistingId, 
+  blogsInDb, 
+  usersInDb
 }
