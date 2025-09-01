@@ -5,6 +5,7 @@ const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogsRouter = require('./controllers/blog')
 const usersRouter = require('./controllers/user')
+const loginRouter = require('./controllers/login')
 
 const app = express()
 
@@ -16,11 +17,12 @@ mongoose.connect(mongoUrl)
   .catch((error) => {
     logger.info('error connecting to MongoDB:', error.message)
   })
-
-  app.use(express.static('dist'))
+ 
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(middleware.requestLogger)
 
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 
