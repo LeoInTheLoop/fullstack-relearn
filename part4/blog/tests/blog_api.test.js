@@ -55,47 +55,47 @@ test('a specific title is within the returned blog', async () => {
 })
 
 describe('addition of a new note', () => {
-test('blog without title is not added', async () => {
-  const newblog = {
-    "title": "5",
-    "author": "String ba;a;",
-    "url": " www.test2.com",
-    "likes": 13
-  }
+  test('blog without title is not added', async () => {
+    const newblog = {
+      "title": "5",
+      "author": "String ba;a;",
+      "url": " www.test2.com",
+      "likes": 13
+    }
 
-  await api
-    .post('/api/blogs')
-    .send(newblog)
-    .expect(400)
+    await api
+      .post('/api/blogs')
+      .send(newblog)
+      .expect(400)
 
-  
-  const blogAtEnd = await helper.blogsInDb()
-  
 
-  assert.strictEqual(blogAtEnd.length, helper.initialBlog.length)
-})
+    const blogAtEnd = await helper.blogsInDb()
 
-test('a valid note can be added HTTP POST', async () => {
-  const newBlog = {
-    "title": "test4",
-    "author": "String ba;a;",
-    "url": " www.test2.com",
-    "likes": 13
-  }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    assert.strictEqual(blogAtEnd.length, helper.initialBlog.length)
+  })
 
-  const blogAtEnd = await helper.blogsInDb()
+  test('a valid note can be added HTTP POST', async () => {
+    const newBlog = {
+      "title": "test4",
+      "author": "String ba;a;",
+      "url": " www.test2.com",
+      "likes": 13
+    }
 
-  const contents = blogAtEnd.map(n => n.title)
-  assert.strictEqual(blogAtEnd.length, helper.initialBlog.length + 1)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  assert(contents.includes('test4'))
-})
+    const blogAtEnd = await helper.blogsInDb()
+
+    const contents = blogAtEnd.map(n => n.title)
+    assert.strictEqual(blogAtEnd.length, helper.initialBlog.length + 1)
+
+    assert(contents.includes('test4'))
+  })
 })
 // test('a specific note can be viewed', async () => {
 //   const blogsAtStart = await helper.blogsInDb()
@@ -137,11 +137,11 @@ test.only('a note can be update like', async () => {
   await api
     .put(`/api/blogs/${blogToUpdate.id}`)
     .send({ likes: 20 })
-     
+
   const blogsAtEnd = await helper.blogsInDb()
   const updatedBlog = blogsAtEnd.find(b => b.title === 'test2')
   assert.strictEqual(updatedBlog.likes, 20)
-  
+
 })
 
 test('a note can be deleted', async () => {
@@ -150,7 +150,7 @@ test('a note can be deleted', async () => {
   // logger.info(blogToDelete)    
   await api
     .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)  
+    .expect(204)
   const blogsAtEnd = await helper.blogsInDb()
   assert.strictEqual(blogsAtEnd.length, helper.initialBlog.length - 1)
 })
@@ -188,7 +188,7 @@ describe('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-    test('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -208,7 +208,51 @@ describe('when there is initially one user in db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
+
+  test('creation fails with shorter password', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'shorterpassword',
+      name: 'shorterpassword',
+      password: 'sa',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('password is required and must be at least 3 characters long'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+    test('creation fails with shorter username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'sh',
+      name: 'shorterpassword',
+      password: 'saadsfga',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('password is required and must be at least 3 characters long'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
 })
+
+
 
 
 
