@@ -7,8 +7,8 @@ const User = require('../models/user')
 //   Phonebook.find({}).then(phonebooks => {
 //     response.json(phonebooks)
 //   })
-// })
-
+// }) 
+ 
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { name: 1})
   response.json(blogs)
